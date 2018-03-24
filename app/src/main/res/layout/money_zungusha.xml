@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/background_gradient">
+
+
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="65dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginBottom="10dp"
+
+        android:id="@+id/linearLayout">
+
+
+        <EditText
+            android:id="@+id/pocket_goal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@android:color/transparent"
+            android:drawableLeft="@drawable/money_zungusha"
+            android:drawablePadding="12dp"
+            android:ems="10"
+            android:hint="Investment Amount / Mtaji Zungusha"
+            android:inputType="number"
+            android:maxLines="1"
+            android:padding="8dp"
+            android:textSize="15sp"
+            android:textColor="@color/lightGray"
+            android:textColorHint="@color/lightGray" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="20dp"
+            android:background="@color/lightGray" />
+
+        <EditText
+            android:id="@+id/zungusha_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@android:color/transparent"
+            android:drawableLeft="@drawable/ic_date_range_black_24dp"
+            android:drawablePadding="12dp"
+            android:ems="10"
+            android:hint="Maturity Date / Siku ya Kuchukua"
+            android:inputType="text"
+            android:maxLines="1"
+            android:padding="8dp"
+            android:textSize="15sp"
+            android:textColor="@color/lightGray"
+            android:textColorHint="@color/lightGray" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="20dp"
+            android:background="@color/lightGray" />
+
+        <Button
+            android:id="@+id/loginButton"
+            style="@style/TextAppearance.AppCompat.Body1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/background_pink"
+            android:clickable="true"
+            android:padding="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
+            android:text="Add Money / Zungusha Pesa"
+            android:textAllCaps="false"
+            android:textColor="#fff"
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" Interest Rates / Riba"
+            android:textStyle="bold"
+            android:textColor="#605f5f"
+            android:layout_marginTop="20dp"
+            android:textSize="20sp"
+            android:layout_marginLeft="10dp"
+            android:drawableLeft="@drawable/emergency_loan"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="20dp"
+            android:background="@color/lightGray" />
+        <ListView
+            android:id="@+id/bankRates"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+        </ListView>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:orientation="horizontal"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true">
+
+        <Button
+            android:id="@+id/home"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/background_pink"
+            android:clickable="true"
+            android:text="BACK"
+            android:textColor="#fff"
+            android:layout_margin="10dp"
+            android:paddingLeft="10dp"
+            android:onClick="loginAction"/>
+
+
+
+    </LinearLayout>
+
+</RelativeLayout>

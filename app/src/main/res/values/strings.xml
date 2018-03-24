@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">BoxPesa</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="prompt_phone">Phone</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Login</string>
+    <string name="invalid_email">This email address is invalid</string>
+    <string name="invalid_password">Password is too short</string>
+    <string name="incorrect_password">Password is incorrect</string>
+    <string name="field_required">This field is required</string>
+    <string name="mobile_money_tigo">Mobile Money: TigoPesa</string>
+    <string name="config_service_desc">"This service records pop ups sent by your mobile operator, and saves them in XXXX App. It is absolutely safe to use</string>
+</resources>
