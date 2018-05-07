@@ -24,8 +24,12 @@ public class ussdReceiver extends BroadcastReceiver {
             Log.d("XXXXXXXXXXX", "PACKAGE: default");
             String message = extras.getString("message");
             Pattern p = Pattern.compile("\\[(\\d{9})\\s+Namba hii imesajiliwa kama (\\w+)(\\s)(\\w+),", Pattern.CASE_INSENSITIVE);
+            Pattern p1 = Pattern.compile("\\[(\\d{9})\\s+this number is registered under (\\w+)(\\s)(\\w+),", Pattern.CASE_INSENSITIVE);
+            Pattern p2 = Pattern.compile("\\[(\\d{9})\\s+this number is registered under (\\w+)(\\s)(\\w+),", Pattern.CASE_INSENSITIVE);
             Log.i("XXXXXXXXXX", "Matching Pattern");
             Matcher m = p.matcher(message);
+            Matcher m1 = p1.matcher(message);
+            Matcher m2 = p2.matcher(message);
             Log.d("XXXXXXXXXX", message);
             if (m.find()) {
                 Log.i("XXXXXXXXXX", "Match Found");
@@ -38,30 +42,55 @@ public class ussdReceiver extends BroadcastReceiver {
                 i.putExtra("phone", activePhone);
 
                 context.sendBroadcast(i);
-            } else {
+            } else if (m1.find()) {
+                Log.i("XXXXXXXXXX", "Match Found");
+                String registeredName = m1.group(2) + m1.group(3) + m1.group(4);
+                Log.i("XXXXXXXXXXX", "Registered name: " + registeredName);
+                String activePhone = "0" + m1.group(1);
+                Log.i("XXXXXXXXXXX", "active phone: " + activePhone);
+                Intent i = new Intent("REGISTERED_NAME");
+                i.putExtra("name", registeredName);
+                i.putExtra("phone", activePhone);
 
+                context.sendBroadcast(i);
             }
         } else {
-            Log.d("XXXXXXXXXX", "PACKAGE: advanced");
+            String tag = "XXXXXXXXXX BReceiver: ";
+            Log.d(tag, "PACKAGE: advanced");
             String message = extras.getString("message");
+            Log.d(tag, message);
             Pattern p = Pattern.compile("(\\d{9})\\s+Namba hii imesajiliwa kama (\\w+)(\\s)(\\w+),", Pattern.CASE_INSENSITIVE);
-            Log.i("XXXXXXXXXXX", "Matching Pattern");
+            Pattern p1 = Pattern.compile("(\\d{9})\\s+this number is registered under (\\w+)(\\s)(\\w+),", Pattern.CASE_INSENSITIVE);
+            Pattern p2 = Pattern.compile("(\\d{9})\\s+this number is registered under (\\w+)(\\s)(\\w+),", Pattern.CASE_INSENSITIVE);
+            Log.d(tag, "Matching Patterns");
             Matcher m = p.matcher(message);
-            Log.d("USSD", message);
-            if (m.find()) {
-                Log.i("XXXXXXXXXXX", "Match Found");
-                String registeredName = m.group(2) + m.group(3) + m.group(4);
-                Log.i("XXXXXXXXXXX", "Registered name = " + registeredName);
-                String activePhone = "0" + m.group(1);
-                Log.i("XXXXXXXXXX", "active phone = " + activePhone);
-                Intent i = new Intent("REGISTERED_NAME");
+            Matcher m1 = p1.matcher(message);
+            Matcher m2 = p2.matcher(message);
 
+            if (m.find()) {
+                Log.i(tag, "Match Found, Pattern 1");
+                String registeredName = m.group(2) + m.group(3) + m.group(4);
+                Log.i(tag, "Registered name: " + registeredName);
+                String activePhone = "0" + m.group(1);
+                Log.i(tag, "active phone: " + activePhone);
+                Intent i = new Intent("REGISTERED_NAME");
+                i.putExtra("name", registeredName);
+                i.putExtra("phone", activePhone);
+
+                context.sendBroadcast(i);
+            } else if (m1.find()) {
+                Log.i(tag, "Match Found, Pattern 2");
+                String registeredName = m1.group(2) + m1.group(3) + m1.group(4);
+                Log.i(tag, "Registered name: " + registeredName);
+                String activePhone = "0" + m1.group(1);
+                Log.i(tag, "active phone: " + activePhone);
+                Intent i = new Intent("REGISTERED_NAME");
                 i.putExtra("name", registeredName);
                 i.putExtra("phone", activePhone);
 
                 context.sendBroadcast(i);
             } else {
-
+                Log.d(tag, "No Match Found");
             }
         }
 

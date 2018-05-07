@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    android:background="@drawable/background_gradient">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
         android:layout_marginTop="40dp">
 
         <LinearLayout
@@ -14,7 +16,24 @@
             android:orientation="vertical"
             android:layout_margin="10dp">
 
+            <ImageView
+                android:layout_width="240dp"
+                android:layout_height="120dp"
+                android:layout_gravity="center_horizontal"
+                android:padding="15dp"
+                android:layout_marginTop="30dp"
+                android:src="@drawable/logo_white"/>
+            <TextView
 
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:text="BOX PESA"
+                android:textStyle="bold"
+                android:textSize="30sp"
+                android:textColor="#fff"/>
 
             <EditText
                 android:id="@+id/direct_amount"
@@ -72,7 +91,7 @@
                 android:textSize="18sp"
                 android:clickable="true"
                 style="@style/TextAppearance.AppCompat.Body1"
-                android:textColor="#fff"
+                android:textColor="@color/pinkAccent"
                 android:onClick="addDirectSaving"/>
 
         </LinearLayout>
@@ -85,8 +104,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:background="@color/lightGray">
+        android:layout_alignParentTop="true">
 
         <Button
             android:id="@+id/home"
@@ -94,18 +112,13 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:background="@color/lightGray"
+            android:background="@drawable/background_login"
             android:clickable="true"
-            android:drawableLeft="@drawable/ic_arrow_back_black_24dp"
+            android:text="BACK"
+            android:textColor="@color/pinkAccent"
             android:paddingLeft="10dp"
             android:onClick="loginAction"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Money Zungusha"
-            android:textColor="#fff"
-            android:textSize="20sp" />
 
     </LinearLayout>
 

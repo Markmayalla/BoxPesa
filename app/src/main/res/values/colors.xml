@@ -9,4 +9,6 @@
     <color name="materialGreen">#00bfa5</color>
     <color name="pinkAccent">#ff4081</color>
     <color name="lightGray">#fcfbfb</color>
+    <color name="darkBlue">#005be0</color>
+    <color name="red">#aa0000</color>
 </resources>

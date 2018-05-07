@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/background_gradient">
+    android:background="@drawable/boxpesa_blue_gradient">
 
 
 
@@ -19,7 +19,7 @@
 
 
         <EditText
-            android:id="@+id/pocket_goal"
+            android:id="@+id/zungusha_amount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -67,7 +67,7 @@
             android:background="@color/lightGray" />
 
         <Button
-            android:id="@+id/loginButton"
+            android:id="@+id/add_zungusha"
             style="@style/TextAppearance.AppCompat.Body1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -80,7 +80,7 @@
             android:layout_marginBottom="10dp"
             android:text="Add Money / Zungusha Pesa"
             android:textAllCaps="false"
-            android:textColor="@color/pinkAccent"
+            android:textColor="#009900"
             android:textSize="18sp" />
 
         <TextView
@@ -88,7 +88,7 @@
             android:layout_height="wrap_content"
             android:text=" Interest Rates / Riba"
             android:textStyle="bold"
-            android:textColor="#605f5f"
+            android:textColor="#fff"
             android:layout_marginTop="20dp"
             android:textSize="20sp"
             android:layout_marginLeft="10dp"

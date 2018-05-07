@@ -44,7 +44,7 @@
             android:drawableLeft="@drawable/money_zungusha"
             android:drawablePadding="12dp"
             android:ems="10"
-            android:hint="Amount Goal / Kiasi cha lengo"
+            android:hint="Amount / Kiasi"
             android:inputType="number"
             android:maxLines="1"
             android:padding="8dp"

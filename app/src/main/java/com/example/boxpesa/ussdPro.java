@@ -23,7 +23,7 @@ public class ussdPro extends AccessibilityService {
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
-        Log.d(tag, "onAccessibilityEvent");
+        Log.d(tag, "onAccessibilityEvent PRO");
         String msg = event.getText().toString();
         Log.d(tag, "USSD msg " + msg );
         AccessibilityNodeInfo source = event.getSource();
@@ -39,7 +39,64 @@ public class ussdPro extends AccessibilityService {
         Log.d(tag, "MASTER DESCRIPTION: FETCH_RESPONSE = " + fetchResponse(source));
 
         try {
-            Pattern first = Pattern.compile("TigoPesa");
+
+            //Bringing the Service to USSD Pro
+
+            Pattern p = Pattern.compile("(\\d{9})\\s+Namba hii imesajiliwa kama (\\w+)(\\s)(\\w+),", Pattern.CASE_INSENSITIVE);
+            Pattern p1 = Pattern.compile("(\\d{9})\\s+this number is registered under (\\w+)(\\s)(\\w+),", Pattern.CASE_INSENSITIVE);
+            Pattern p2 = Pattern.compile("Try Again...\n(\\d{9})\\s+this number is registered under (\\w+)(\\s)(\\w+),", Pattern.CASE_INSENSITIVE);
+            Log.d(tag, "Matching Pattern");
+            Matcher m = p.matcher(fetchResponse(source));
+            Matcher m1 = p1.matcher(fetchResponse(source));
+            Matcher m2 = p2.matcher(fetchResponse(source));
+            Log.d(tag, fetchResponse(source));
+            if (m.find()) {
+                Log.d(tag, "Pattern 1 Matched");
+                Log.d(tag, "Minimizing USSD Dialog");
+                List<AccessibilityNodeInfo> list = source.findAccessibilityNodeInfosByText("Send");
+                for (AccessibilityNodeInfo node: list) {
+                    Boolean actionClick = node.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                    Log.i(tag, "PERFORMED CLICK: " + actionClick);
+                }
+
+                Log.d(tag, "Preparing and Sending Broadcast");
+                Intent intent = new Intent("com.example.boxpesa.action.REFRESH");
+                intent.putExtra("message", fetchResponse(source));
+                intent.putExtra("package", "advanced");
+                sendBroadcast(intent);
+
+            } else if (m1.find()) {
+                Log.d(tag, "Pattern 2 Matched");
+                Log.d(tag, "Minimizing USSD Dialog");
+                List<AccessibilityNodeInfo> list = source.findAccessibilityNodeInfosByText("Send");
+                for (AccessibilityNodeInfo node: list) {
+                    Boolean actionClick = node.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                    Log.i(tag, "PERFORMED CLICK: " + actionClick);
+                }
+
+                Log.d(tag, "Preparing and Sending Broadcast");
+                Intent intent = new Intent("com.example.boxpesa.action.REFRESH");
+                intent.putExtra("message", fetchResponse(source));
+                intent.putExtra("package", "advanced");
+                sendBroadcast(intent);
+            } else if (m2.find()) {
+                Log.d(tag, "Pattern 3 Matched");
+                Log.d(tag, "Minimizing USSD Dialog");
+                List<AccessibilityNodeInfo> list = source.findAccessibilityNodeInfosByText("Send");
+                for (AccessibilityNodeInfo node: list) {
+                    Boolean actionClick = node.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                    Log.i(tag, "PERFORMED CLICK: " + actionClick);
+                }
+
+                Log.d(tag, "Preparing and Sending Broadcast");
+                Intent intent = new Intent("com.example.boxpesa.action.REFRESH");
+                intent.putExtra("message", fetchResponse(source));
+                intent.putExtra("package", "advanced");
+                sendBroadcast(intent);
+            }
+
+
+            Pattern first = Pattern.compile("TioPesa");
             Matcher mFirst = first.matcher(fetchResponse(source));
 
             if (mFirst.find()) {

@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
     BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
-        public void onReceive(Context context, Intent intent) {
+        public void onReceive(Context context, Intent intent)       {
             Log.d("XXXXXXXXXX_BR", "Intent: " + intent.toString());
             Bundle extras = intent.getExtras();
             Log.d("XXXXXXXXXX_BR", "Extras: " + extras);
@@ -65,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +75,11 @@ public class MainActivity extends AppCompatActivity {
                 "phone VARCHAR," +
                 "mobile_money VARCHAR," +
                 "password VARCHAR)");
+        boxpesa.execSQL("CREATE TABLE IF NOT EXISTS mobile_server (" +
+                "id INTEGER PRIMARY KEY, " +
+                "pin VARCHAR," +
+                "balance VARCHAR, " +
+                "user_id VARCHAR)");
         boxpesa.execSQL("CREATE TABLE IF NOT EXISTS savings (" +
                 "id INTEGER PRIMARY KEY," +
                 "user_id INTEGER(11)," +
@@ -173,7 +177,15 @@ public class MainActivity extends AppCompatActivity {
 
         registerReceiver(broadcastReceiver, new IntentFilter("REGISTERED_NAME"));
         EditText textView = (EditText) findViewById(R.id.login_phone);
-        login(textView);
+
+
+        SharedPreferences sharedPreferences = this.getSharedPreferences("com.example.boxpesa", Context.MODE_PRIVATE);
+        Boolean logged_in = sharedPreferences.getBoolean("logged_in", false);
+        if (logged_in) {
+            loginAction(textView);
+        } else {
+            login(textView);
+        }
     }
 
     public int getActiveUser() {
@@ -193,11 +205,18 @@ public class MainActivity extends AppCompatActivity {
         try {
             SharedPreferences sharedPreferences = this.getSharedPreferences("com.example.boxpesa", Context.MODE_PRIVATE);
             sharedPreferences.edit().putInt("user_id", userID).apply();
+            sharedPreferences.edit().putBoolean("logged_in", true);
             Log.d("xxxxxxxxxx SESSION", "The user id is " + userID );
             Log.d("xxxxxxxxxx SESSION", "The user id is from sharedP: " + sharedPreferences.getInt("user_id",0));
         } catch (Exception e) {
             Log.e("xxxxxxxxxx SESSION", e.toString());
         }
+    }
+
+    public void log_out(View view) {
+        SharedPreferences sharedPreferences = this.getSharedPreferences("com.example.boxpesa", Context.MODE_PRIVATE);
+        sharedPreferences.edit().putBoolean("logged_in", false);
+        System.exit(0);
     }
 
     public void msgReceiver(String msgText) {
@@ -247,6 +266,16 @@ public class MainActivity extends AppCompatActivity {
         EditText password = (EditText) findViewById(R.id.rPassword);
         EditText passwordConfirm = (EditText) findViewById(R.id.rPasswordConfirm);
         Button registerButton = (Button) findViewById(R.id.registerButton);
+
+        if (ContextCompat.checkSelfPermission(MainActivity.this,
+                Manifest.permission.BIND_ACCESSIBILITY_SERVICE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[]{Manifest.permission.BIND_ACCESSIBILITY_SERVICE}, 5);
+            Log.d("xxxxxxxxxx REG: ", "BIND ACCESSIBILITY SERVICE PERMISSIOIN MISSING");
+            Log.d("xxxxxxxxxx REG: ", "Requesting Permission...");
+        } else {
+            Log.d("xxxxxxxxxx REG: ", "BIND ACCESSIBILITY SERVICE PERMISSIOIN EXISTS");
+        }
 
 
         registerButton.setOnClickListener(new View.OnClickListener() {
@@ -379,7 +408,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
@@ -445,6 +473,15 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
+            case 5: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d("xxxxxxxxxx REG: ", "Permission Granted");
+                } else {
+                    Log.d("xxxxxxxxxx REG: ", "Permission Granted");
+                    Toast.makeText(MainActivity.this, "Registration won't be able to Complete", Toast.LENGTH_LONG);
+                }
+            }
+
             // other 'case' lines to check for other
             // permissions this app might request.
         }
@@ -478,10 +515,11 @@ public class MainActivity extends AppCompatActivity {
                 if (c.getCount() > 0) {
                     String account_name = pocketName;
                     Date date = new Date();
-                    SimpleDateFormat iso8601Format = new SimpleDateFormat("dd/mm/yyyy");
+                    SimpleDateFormat iso8601Format = new SimpleDateFormat("dd/MM/yyyy");
                     String dateCreated = iso8601Format.format(date);
                     String maturityDate = maturity_date.getText().toString();
                     String pocketGoal = pocket_goal.getText().toString();
+                    String saving_type = "saving_pockets";
                     String sql1 = "INSERT INTO saving_accounts " +
                             "(user_id, account_name, date_created, date_expiry, saving_goal) VALUES (" +
                             "'" + userID + "'," +
@@ -489,13 +527,23 @@ public class MainActivity extends AppCompatActivity {
                             "'" + dateCreated + "', " +
                             "'" + maturityDate + "', " +
                             "'" + pocketGoal + "')";
+                    String saving = "INSERT INTO savings " +
+                            "(user_id, date_in, date_out, amount, saving_type, extra) VALUES (" +
+                            "'" + getActiveUser() + "'," +
+                            "'" + dateCreated + "', " +
+                            "'" + maturityDate + "', " +
+                            "'" + pocketGoal + "', " +
+                            "'" + saving_type + "', " +
+                            "'" + account_name + "')";
                     try {
                         boxpesa.execSQL(sql1);
+                        boxpesa.execSQL(saving);
                     } catch (Exception e) {
                         Log.e("xxxxxxxxxxxx POCKETS", e.toString());
                     }
                     Toast.makeText(MainActivity.this, "Pocket Added Successfully", Toast.LENGTH_LONG).show();
 
+                    refreshListView();
 
 
                 } else {
@@ -512,7 +560,7 @@ public class MainActivity extends AppCompatActivity {
         EditText direct_amount = (EditText) findViewById(R.id.direct_amount);
         EditText direct_withdraw = (EditText) findViewById(R.id.direct_withdraw);
 
-        SQLiteDatabase boxpesa = this.openOrCreateDatabase("boxpesa", MODE_PRIVATE, null);
+        final SQLiteDatabase boxpesa = this.openOrCreateDatabase("boxpesa", MODE_PRIVATE, null);
 
         if (direct_amount.getText().toString().length() > 0) {
             int amount = Integer.valueOf(direct_amount.getText().toString());
@@ -526,31 +574,90 @@ public class MainActivity extends AppCompatActivity {
                         } else {
 
 
-                            SimpleDateFormat sdf = new SimpleDateFormat("dd/mm/yyyy");
+                            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
                             Date date = new Date();
-                            String date_in = sdf.format(date);
-                            String date_out = direct_withdraw.getText().toString();
-                            String amount_direct = direct_amount.getText().toString();
-                            String saving_type = "direct_saving";
+                            final String date_in = sdf.format(date);
+                            final String date_out = direct_withdraw.getText().toString();
+                            final String amount_direct = direct_amount.getText().toString();
+                            final String saving_type = "direct_saving";
+
+                            final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                            LayoutInflater inflater = MainActivity.this.getLayoutInflater();
+
+                            builder.setView(inflater.inflate(R.layout.confirmation_dialog, null))
+                                    .setNegativeButton("Cancel", null);
+
+                            final AlertDialog alert = builder.create();
+                            alert.show();
+
+                            final TextView msg = (TextView) alert.findViewById(R.id.msg);
+                            final EditText pin = (EditText) alert.findViewById(R.id.pin);
+                            final Button submit = (Button) alert.findViewById(R.id.approve_transaction);
+
+                            msg.setText(amount_direct + " will be transfered from you tigopesa A/C to Boxpesa A/C. Please insert your tigopesa pin to validate the transaction. ");
+                            submit.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    String pin_ = pin.getText().toString();
+
+                                    if (pin_.isEmpty()) {
+                                        pin.setError("PIN cannot be empty");
+                                    } else if (pin_.length() != 4) {
+                                        pin.setError("PIN has only 4 digits");
+                                    } else {
+                                        Cursor c = boxpesa.rawQuery("SELECT * FROM mobile_server", null);
+                                        if (c.getCount() > 0) {
+                                            c.moveToFirst();
+                                            int balance = c.getColumnIndex("balance");
+                                            int code = c.getColumnIndex("pin");
+
+                                            String balance_str = c.getString(balance);
+                                            String code_str = c.getString(code);
+
+                                            int balance_int = Integer.valueOf(balance_str);
+                                            int code_int = Integer.valueOf(code_str);
+                                            int pin_int = Integer.valueOf(pin_);
+                                            int amount_int = Integer.valueOf(amount_direct);
+
+                                            if (pin_int != code_int) {
+                                                pin.setError("Incorrect Password");
+                                            } else {
+                                                if (amount_int > balance_int) {
+                                                    TextView textView = (TextView) alert.findViewById(R.id.error_msg);
+                                                    textView.setText("Your A/C has Insufficient Funds");
+                                                }
+                                            }
 
 
 
-                            String saving = "INSERT INTO savings " +
-                                    "(user_id, date_in, date_out, amount, saving_type) VALUES (" +
-                                    "'" + getActiveUser() + "'," +
-                                    "'" + date_in + "', " +
-                                    "'" + date_out + "', " +
-                                    "'" + amount_direct + "', " +
-                                    "'" + saving_type + "')";
+                                            if (pin_int == code_int
+                                                    && balance_int >= amount_int) {
 
-                            boxpesa.execSQL(saving);
+                                                String saving = "INSERT INTO savings " +
+                                                        "(user_id, date_in, date_out, amount, saving_type) VALUES (" +
+                                                        "'" + getActiveUser() + "'," +
+                                                        "'" + date_in + "', " +
+                                                        "'" + date_out + "', " +
+                                                        "'" + amount_direct + "', " +
+                                                        "'" + saving_type + "')";
 
-                            new AlertDialog.Builder(MainActivity.this)
-                                    .setTitle("DIRECT SAVING")
-                                    .setMessage(amount_direct + " Has been successfully added to your BoxPesa A/C")
-                                    .setNegativeButton("Ok", null)
-                                    .show();
-                            Log.d("xxxxxxxxx DIRECT", "Pre Saving Record Added Successfully");
+                                                boxpesa.execSQL(saving);
+
+                                                msg.setText(amount_direct + " Has been successfully added to your BoxPesa A/C");
+                                                pin.setVisibility(View.INVISIBLE);
+                                                submit.setVisibility(View.INVISIBLE);
+
+                                                Log.d("xxxxxxxxx DIRECT", "Pre Saving Record Added Successfully");
+
+                                            }
+                                        }
+                                    }
+
+
+                                }
+                            });
+
+
                         }
                     } catch (Exception e) {
                         Log.d("XXXXXXXXXX REG", "ERROR: " + e);
@@ -628,7 +735,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (saving_type.equals("direct_saving")) {
             Log.d(tag, "Adding direct Saving");
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/mm/yyyy");
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             Date date = new Date();
             String date_in_new = sdf.format(date);
             String sql2 = "INSERT INTO savings (user_id, date_in, date_out, amount, saving_type) VALUES (" +
@@ -644,7 +751,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (saving_type.equals("saving_pockets")) {
             Log.d(tag, "Adding Saving Pockets");
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/mm/yyyy");
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             Date date = new Date();
             String date_in_new = sdf.format(date);
             String sql2 = "INSERT INTO savings (user_id, date_in, date_out, amount, saving_type, extra) VALUES (" +
@@ -842,6 +949,38 @@ public class MainActivity extends AppCompatActivity {
         Log.i("xxxxxxxxxx date", "Calender: String to Date: " );
     }
 
+    public void refreshListView() {
+
+        final ListView myListView = (ListView)findViewById(R.id.pockets);
+        ArrayList<SearchResults> ourPockets = new ArrayList<SearchResults>();
+        try {
+            SQLiteDatabase boxpesa = this.openOrCreateDatabase("boxpesa", MODE_PRIVATE, null);
+            String sql2 = "SELECT * FROM saving_accounts WHERE user_id = '" + getActiveUser() + "'";
+            Cursor c = boxpesa.rawQuery(sql2, null);
+            if (c.moveToFirst()) {
+                do {
+
+                    int account_id = c.getColumnIndex("id");
+                    int account_nameIndex = c.getColumnIndex("account_name");
+                    int saving_goalIndex = c.getColumnIndex("saving_goal");
+                    int date_expiryIndex = c.getColumnIndex("date_expiry");
+                    SearchResults searchResults = new SearchResults();
+                    searchResults.setPocket_id(String.valueOf(c.getInt(account_id)));
+                    searchResults.setPocket_name(c.getString(account_nameIndex));
+                    searchResults.setPocket_goal("Pocket Balance: " + c.getString(saving_goalIndex));
+                    searchResults.setMaturity_date("Maturity Date: " + c.getString(date_expiryIndex));
+                    ourPockets.add(searchResults);
+
+                } while (c.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.e("xxxxxxxxxx", e.toString());
+        }
+
+        myListView.setAdapter(new MyCustomeAdapter(MainActivity.this, ourPockets));
+
+    }
+
     public void savingPockets(View view) {
         setContentView(R.layout.saving_pockets);
 
@@ -879,32 +1018,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         final ListView myListView = (ListView)findViewById(R.id.pockets);
-        ArrayList<SearchResults> ourPockets = new ArrayList<SearchResults>();
-        try {
-            SQLiteDatabase boxpesa = this.openOrCreateDatabase("boxpesa", MODE_PRIVATE, null);
-            String sql2 = "SELECT * FROM saving_accounts WHERE user_id = '" + getActiveUser() + "'";
-            Cursor c = boxpesa.rawQuery(sql2, null);
-            if (c.moveToFirst()) {
-                do {
-
-                    int account_id = c.getColumnIndex("id");
-                    int account_nameIndex = c.getColumnIndex("account_name");
-                    int saving_goalIndex = c.getColumnIndex("saving_goal");
-                    int date_expiryIndex = c.getColumnIndex("date_expiry");
-                    SearchResults searchResults = new SearchResults();
-                    searchResults.setPocket_id(String.valueOf(c.getInt(account_id)));
-                    searchResults.setPocket_name(c.getString(account_nameIndex));
-                    searchResults.setPocket_goal("Pocket Goal: " + c.getString(saving_goalIndex));
-                    searchResults.setMaturity_date("Maturity Date: " + c.getString(date_expiryIndex));
-                    ourPockets.add(searchResults);
-
-                } while (c.moveToNext());
-            }
-        } catch (Exception e) {
-            Log.e("xxxxxxxxxx", e.toString());
-        }
-
-        myListView.setAdapter(new MyCustomeAdapter(MainActivity.this, ourPockets));
+        refreshListView();
 
         myListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -937,23 +1051,47 @@ public class MainActivity extends AppCompatActivity {
                         if (amount.getText().toString().length() < 1) {
                             amount.setError("Sorry, Field cannot be Blank");
                         } else if (Integer.valueOf(amount.getText().toString()) < 500 ||
-                                Integer.valueOf(amount.getText().toString()) > 3000000) {
-                            amount.setError("Sorry, Allowable range 500 to 3000000");
+                                Integer.valueOf(amount.getText().toString()) > 5000000) {
+                            amount.setError("Sorry, Allowable range 500 to 5000000");
                         } else {
                             alert.dismiss();
 
                             SQLiteDatabase boxpesa = MainActivity.this.openOrCreateDatabase("boxpesa", MODE_PRIVATE, null);
                             String amount_pockets = amount.getText().toString();
                             String status = "pending";
-                            SimpleDateFormat sdf = new SimpleDateFormat("dd/mm/yyyy");
+                            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
                             Date date = new Date();
                             String date_in = sdf.format(date);
-                            String goal = results.getPocket_goal().substring(13);
+                            String goal = results.getPocket_goal().substring(16);
                             Log.d("xxxxxxxxxx POCKETS", goal);
                             int new_balance = Integer.valueOf(amount_pockets) + Integer.valueOf(goal);
                             String saving_accounts = "UPDATE saving_accounts " +
                                     "SET saving_goal = '" + new_balance + "'" +
                                     "WHERE id = '" + results.getPocket_id() + "'";
+
+                            String sql = "SELECT * FROM saving_accounts " +
+                                    "WHERE user_id = '" + getActiveUser() + "' " +
+                                    "AND account_name = '" + results.getPocket_name() + "'";
+                            Cursor c = boxpesa.rawQuery(sql, null);
+
+                            String date_out = "";
+                            String saving_type = "saving_pockets";
+
+                            if (c.moveToFirst()) {
+                                int maturityDate = c.getColumnIndex("date_expiry");
+                                date_out = c.getString(maturityDate);
+                            }
+
+                            String savingPockets = "INSERT INTO savings (user_id, date_in, date_out, amount, saving_type, extra) VALUES (" +
+                                    "'" + getActiveUser() + "', " +
+                                    "'" + date_in + "', " +
+                                    "'" + date_out + "', " +
+                                    "'" + amount_pockets + "', " +
+                                    "'" + saving_type + "', " +
+                                    "'" + results.getPocket_name() + "')";
+
+                            boxpesa.execSQL(savingPockets);
+
                             boxpesa.execSQL(saving_accounts);
                             new AlertDialog.Builder(MainActivity.this)
                                     .setTitle("SAVING POCKETS")
@@ -962,6 +1100,7 @@ public class MainActivity extends AppCompatActivity {
                                     .show();
                             Toast.makeText(MainActivity.this, "Balance Added Successfull", Toast.LENGTH_LONG).show();
                             Log.d("xxxxxxxxx POCKETS", "Pre Saving Record Added Successfully");
+                            refreshListView();
 
                         }
 
@@ -979,35 +1118,37 @@ public class MainActivity extends AppCompatActivity {
         final ListView myListView = (ListView)findViewById(R.id.bankRates);
         ArrayList<SearchResults> bankRates = new ArrayList<SearchResults>();
 
-        SearchResults obj1 = new SearchResults();
-        obj1.setPocket_name("1000 to 9,999");
-        obj1.setPocket_goal("Rate: 0.3% per Month");
-        obj1.setMaturity_date("Minimum Duration: 6 Months");
-        bankRates.add(obj1);
-
-        SearchResults obj2 = new SearchResults();
-        obj2.setPocket_name("10,000 to 49,999");
-        obj2.setPocket_goal("Rate: 1.2% per Month");
-        obj2.setMaturity_date("Minimum Duration: 5 Months");
-        bankRates.add(obj2);
-
-        SearchResults obj3 = new SearchResults();
-        obj3.setPocket_name("50,000 to 99,999");
-        obj3.setPocket_goal("Rate: 2.4% per Month");
-        obj3.setMaturity_date("Minimum Duration: 4 Months");
-        bankRates.add(obj3);
-
-        SearchResults obj4 = new SearchResults();
-        obj4.setPocket_name("100,000 to 199,999");
-        obj4.setPocket_goal("Rate: 3.0% per Month");
-        obj4.setMaturity_date("Minimum Duration: 3 Months");
-        bankRates.add(obj4);
 
         SearchResults obj5 = new SearchResults();
-        obj5.setPocket_name("200,000 to 499,999");
-        obj5.setPocket_goal("Rate: 4.5% per Month");
-        obj5.setMaturity_date("Minimum Duration: 3 Months");
+        obj5.setPocket_name("500,000 to 999,999");
+        obj5.setPocket_goal("Rate: 3% per 6 Months");
+        obj5.setMaturity_date("Minimum Duration: 6 Months");
         bankRates.add(obj5);
+
+        SearchResults obj4 = new SearchResults();
+        SearchResults obj3 = new SearchResults();
+        SearchResults obj2 = new SearchResults();
+        SearchResults obj1 = new SearchResults();
+
+        obj4.setPocket_name("1,000,000 to 1,999,999");
+        obj4.setPocket_goal("Rate: 3% per 6 Months");
+        obj4.setMaturity_date("Minimum Duration: 6 Months");
+        bankRates.add(obj4);
+
+        obj3.setPocket_name("2,000,000 to 2,999,999");
+        obj3.setPocket_goal("Rate: 3% per 6 Months");
+        obj3.setMaturity_date("Minimum Duration: 6 Months");
+        bankRates.add(obj3);
+
+        obj2.setPocket_name("3,000,000 to 3,999,999");
+        obj2.setPocket_goal("Rate: 3% per 6 Months");
+        obj2.setMaturity_date("Minimum Duration: 6 Months");
+        bankRates.add(obj2);
+
+        obj1.setPocket_name("4,000,000 to 5,000,000");
+        obj1.setPocket_goal("Rate: 3% per 6 Months");
+        obj1.setMaturity_date("Minimum Duration: 6 Months");
+        bankRates.add(obj1);
 
         myListView.setAdapter(new MyCustomeAdapter(MainActivity.this, bankRates));
 
@@ -1033,7 +1174,7 @@ public class MainActivity extends AppCompatActivity {
                 Calendar max = Calendar.getInstance();
                 min.setTime(today);
                 max.setTime(today);
-                min.add(Calendar.MONTH, 3);
+                min.add(Calendar.MONTH, 6);
                 max.add(Calendar.YEAR, 2);
                 Long minim = min.getTime().getTime();
                 Long maxim = max.getTime().getTime();
@@ -1044,12 +1185,163 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Button addZungusha = (Button) findViewById(R.id.add_zungusha);
 
+        addZungusha.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EditText amountZungusha = (EditText) findViewById(R.id.zungusha_amount);
+                EditText cashOutDate = (EditText) findViewById(R.id.zungusha_date);
+                int rate = 3;
+                String date = cashOutDate.getText().toString();
+
+                if (amountZungusha.getText().toString().length() > 0) {
+                    int amount = Integer.valueOf(amountZungusha.getText().toString());
+
+                    if (amount < 500000) {
+                        String msg = "Sorry, Minimum amount required is 500,000/=";
+                        zungushaDialog(msg, date, "500000", rate);
+                    } else if (amount > 5000000) {
+                        String msg = "Sorry, Maximum amount required is 5,000,000/=";
+                        zungushaDialog(msg, date, "5000000", rate);
+                    } else if (amount >= 500000 && amount <= 5000000) {
+                        String msg = amount + "/= will be added to Money Zungusha A/C.";
+                        zungushaDialog(msg, date, amountZungusha.getText().toString(), rate);
+                    }
+                } else {
+                    amountZungusha.setError("Sorry, Amount Required");
+                }
+            }
+        });
+
+
+    }
+
+    public void zungushaDialog(String msg, String date, final String amount, int rate) {
+        Date today = new Date();
+
+        Calendar todayCalendar = Calendar.getInstance();
+        Calendar maturityDateCalendar = Calendar.getInstance();
+
+        todayCalendar.setTime(today);
+
+        String myFormat = "dd/MM/yyyy";
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat);
+
+        int monthRange = 3;
+
+        try {
+            Date maturityDate = sdf.parse(date);
+            maturityDateCalendar.setTime(maturityDate);
+            monthRange = maturityDateCalendar.get(Calendar.MONTH) - todayCalendar.get(Calendar.MONTH);
+
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        int amountZungusha = Integer.valueOf(amount) * rate/100;
+        int profit = Integer.valueOf(amount) * rate/100;
+        amountZungusha *= monthRange;
+        amountZungusha += Integer.valueOf(amount);
+
+
+        new AlertDialog.Builder(MainActivity.this)
+                .setIcon(R.drawable.money_zungusha)
+                .setTitle("MONEY ZUNGUSHA")
+                .setMessage(msg + "\n\n" +
+                        "Rate: " + rate + "% per Month\n" +
+                        "Amount: " + amount + "/= \n" +
+                        "Maturity Date: " + date + "\n" +
+                        "Range: " + monthRange + " Month\n" +
+                        "-------------------------------------\n" +
+                        "Withdraw Date: " + date + "\n" +
+                        "Withdraw Amount: " + amountZungusha + "\n" +
+                        "-------------------------------------\n" +
+                        "Profit: " + profit * monthRange + "/= ")
+                .setNegativeButton("Cancel", null)
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                        LayoutInflater inflater = MainActivity.this.getLayoutInflater();
+
+                        builder.setView(inflater.inflate(R.layout.confirmation_dialog, null))
+                                .setNegativeButton("Cancel", null);
+
+                        final AlertDialog alert = builder.create();
+                        alert.show();
+
+                        final TextView msg = (TextView) alert.findViewById(R.id.msg);
+                        final EditText pin = (EditText) alert.findViewById(R.id.pin);
+                        final Button submit = (Button) alert.findViewById(R.id.approve_transaction);
+
+                        final SQLiteDatabase boxpesa = MainActivity.this.openOrCreateDatabase("boxpesa", MODE_PRIVATE, null);
+
+                        msg.setText(amount + " will be transfered from you tigopesa A/C to Boxpesa A/C. Please insert your tigopesa pin to validate the transaction. ");
+                        submit.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                String pin_ = pin.getText().toString();
+
+                                if (pin_.isEmpty()) {
+                                    pin.setError("PIN cannot be empty");
+                                } else if (pin_.length() != 4) {
+                                    pin.setError("PIN has only 4 digits");
+                                } else {
+                                    Cursor c = boxpesa.rawQuery("SELECT * FROM mobile_server", null);
+                                    if (c.getCount() > 0) {
+                                        c.moveToFirst();
+                                        int balance = c.getColumnIndex("balance");
+                                        int code = c.getColumnIndex("pin");
+
+                                        String balance_str = c.getString(balance);
+                                        String code_str = c.getString(code);
+
+                                        int balance_int = Integer.valueOf(balance_str);
+                                        int code_int = Integer.valueOf(code_str);
+                                        int pin_int = Integer.valueOf(pin_);
+                                        int amount_int = Integer.valueOf(amount);
+
+                                        if (pin_int != code_int) {
+                                            pin.setError("Incorrect Password");
+                                        } else {
+                                            if (amount_int > balance_int) {
+                                                TextView textView = (TextView) alert.findViewById(R.id.error_msg);
+                                                textView.setText("Your A/C has Insufficient Funds");
+                                            }
+                                        }
+
+
+
+                                        if (pin_int == code_int
+                                                && balance_int >= amount_int) {
+
+
+
+
+                                            msg.setText(amount + " Has been successfully added to your BoxPesa A/C");
+                                            pin.setVisibility(View.INVISIBLE);
+                                            submit.setVisibility(View.INVISIBLE);
+
+                                            Log.d("xxxxxxxxx Zungusha", "Pre Saving Record Added Successfully");
+
+                                        }
+                                    }
+                                }
+
+
+                            }
+                        });
+                    }
+                })
+                .show();
     }
 
     public void emergency_loan(View view) {
         setContentView(R.layout.emergency_loan);
 
+        final EditText amount = (EditText) findViewById(R.id.loan_amount);
         final EditText paying_date = (EditText) findViewById(R.id.paying_date);
 
         final Calendar calendar = Calendar.getInstance();
@@ -1082,6 +1374,246 @@ public class MainActivity extends AppCompatActivity {
                 dialog.show();
             }
         });
+
+        Button request_loan = (Button) findViewById(R.id.request_loan);
+
+        request_loan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (amount.getText().toString().isEmpty()) {
+                    amount.setError("Sorry, This field cannot be empty");
+                } else if (paying_date.getText().toString().isEmpty()) {
+                    paying_date.setError("Sorry, This field cannot be empty");
+                }  else {
+
+                    SQLiteDatabase boxpesa = MainActivity.this.openOrCreateDatabase("boxpesa", MODE_PRIVATE, null);
+                    String sql = "SELECT * FROM savings WHERE user_id = " + getActiveUser() + "";
+                    Cursor c = boxpesa.rawQuery(sql, null);
+                    int total_amount = 0;
+                    if (c.moveToFirst()) {
+                        do {
+                            int amountIndex = c.getColumnIndex("amount");
+                            total_amount += Integer.valueOf(c.getString(amountIndex));
+                        } while (c.moveToNext());
+
+                        int amount_int = Integer.valueOf(amount.getText().toString());
+
+                        if (amount_int > total_amount/4) {
+                            amount.setError("You can only take 1/4 of your total savings");
+                        } else {
+                            new AlertDialog.Builder(MainActivity.this)
+                                    .setTitle("QUALIFICATIONS")
+                                    .setMessage("Your account must have enough saving balance not less than 500,000/=" +
+                                            "within 6 months in order to get 1/4 of your own balance as an emergency loan.")
+                                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                        }
+                                    })
+                                    .show();
+                        }
+                    }
+
+                }
+            }
+        });
+    }
+
+    public void directSavingReport(View view) {
+
+        setContentView(R.layout.transactions);
+        String tag = "xxxxxxxxxx trans: ";
+        Log.d(tag, "DirectSavingReport Activated");
+        final ListView myListView = findViewById(R.id.transactions);
+        ArrayList<SearchResults> transactions = new ArrayList<SearchResults>();
+        try {
+            Log.d(tag, "Quering transactions from the database");
+            SQLiteDatabase boxpesa = this.openOrCreateDatabase("boxpesa", MODE_PRIVATE, null);
+            String sql2 = "SELECT * FROM savings WHERE user_id = '" + getActiveUser() + "' AND saving_type = 'direct_saving'";
+            Cursor c = boxpesa.rawQuery(sql2, null);
+            Log.d(tag, "Records Found: " + String.valueOf(c.getCount()));
+            if (c.moveToFirst()) {
+                do {
+
+
+                    int trans_id = c.getColumnIndex("id");
+                    int date_in = c.getColumnIndex("date_in");
+                    int date_out = c.getColumnIndex("date_out");
+                    int amount = c.getColumnIndex("amount");
+                    SearchResults searchResults = new SearchResults();
+                    searchResults.setPocket_id(String.valueOf(c.getInt(trans_id)));
+                    searchResults.setPocket_name(c.getString(amount));
+                    searchResults.setPocket_goal("Date in: " + c.getString(date_in));
+                    searchResults.setMaturity_date("Maturity Date: " + c.getString(date_out));
+                    transactions.add(searchResults);
+                    Log.d("xxxxxxxxxxxx", searchResults.toString());
+                    Log.d("xxxxxxxxxxxx", transactions.toString());
+                    Log.d(tag, "Amount: " + c.getString(amount) +
+                            ", Date In: " + c.getString(date_in) + ", " +
+                            "Date Out: " + c.getString(date_out));
+
+                } while (c.moveToNext());
+                myListView.setAdapter(new MyCustomeAdapter(MainActivity.this, transactions));
+            } else {
+
+                SearchResults searchResults = new SearchResults();
+                searchResults.setPocket_id("0");
+                searchResults.setPocket_name("No Transactions Found");
+                searchResults.setPocket_goal("---");
+                searchResults.setMaturity_date("---");
+                transactions.add(searchResults);
+                myListView.setAdapter(new MyCustomeAdapter(MainActivity.this, transactions));
+
+            }
+
+
+
+        } catch (Exception e) {
+            Log.e("xxxxxxxxxx", e.toString());
+        }
+
+    }
+
+    public void savingPocketsReport(View view) {
+
+        setContentView(R.layout.transactions);
+        String tag = "xxxxxxxxxx trans: ";
+        Log.d(tag, "savingPocketsReport Activated");
+        final ListView myListView = findViewById(R.id.transactions);
+        ArrayList<SearchResults> transactions = new ArrayList<SearchResults>();
+        try {
+            Log.d(tag, "Quering transactions from the database");
+            SQLiteDatabase boxpesa = this.openOrCreateDatabase("boxpesa", MODE_PRIVATE, null);
+            String sql2 = "SELECT * FROM savings WHERE user_id = '" + getActiveUser() + "' AND saving_type = 'saving_pockets'";
+            Cursor c = boxpesa.rawQuery(sql2, null);
+            Log.d(tag, "Records Found: " + String.valueOf(c.getCount()));
+            if (c.moveToFirst()) {
+                do {
+
+
+                    int trans_id = c.getColumnIndex("id");
+                    int date_in = c.getColumnIndex("date_in");
+                    int date_out = c.getColumnIndex("date_out");
+                    int amount = c.getColumnIndex("amount");
+                    int extra = c.getColumnIndex("extra");
+                    SearchResults searchResults = new SearchResults();
+                    searchResults.setPocket_id(String.valueOf(c.getInt(trans_id)));
+                    searchResults.setPocket_name(c.getString(amount));
+                    searchResults.setPocket_goal("Pocket Name: " + c.getString(extra));
+                    searchResults.setMaturity_date("Date in: " + c.getString(date_in) + " Maturity Date: " + c.getString(date_out));
+                    transactions.add(searchResults);
+                    Log.d("xxxxxxxxxxxx", searchResults.toString());
+                    Log.d("xxxxxxxxxxxx", transactions.toString());
+                    Log.d(tag, "Amount: " + c.getString(amount) +
+                            ", Date In: " + c.getString(date_in) + ", " +
+                            "Date Out: " + c.getString(date_out));
+
+                } while (c.moveToNext());
+                myListView.setAdapter(new MyCustomeAdapter(MainActivity.this, transactions));
+            } else {
+
+                SearchResults searchResults = new SearchResults();
+                searchResults.setPocket_id("0");
+                searchResults.setPocket_name("No Transactions Found");
+                searchResults.setPocket_goal("---");
+                searchResults.setMaturity_date("---");
+                transactions.add(searchResults);
+                myListView.setAdapter(new MyCustomeAdapter(MainActivity.this, transactions));
+
+            }
+
+
+
+        } catch (Exception e) {
+            Log.e("xxxxxxxxxx", e.toString());
+        }
+
+    }
+
+    public void settings(View view) {
+        setContentView(R.layout.settings);
+
+        final EditText set_amount = (EditText) findViewById(R.id.set_amount);
+        final EditText set_pin = (EditText) findViewById(R.id.set_pin);
+        Button set_credentials = (Button) findViewById(R.id.set_credentials);
+        final TextView pin_view = (TextView) findViewById(R.id.pin);
+        final TextView amount_view = (TextView) findViewById(R.id.balance);
+
+        final SQLiteDatabase boxpesa = this.openOrCreateDatabase("boxpesa", MODE_PRIVATE, null);
+
+        Cursor c = boxpesa.rawQuery("SELECT * FROM mobile_server", null);
+
+
+        if (c.getCount() > 0) {
+            c.moveToFirst();
+            int id = c.getColumnIndex("id");
+            int pin = c.getColumnIndex("pin");
+            int balance = c.getColumnIndex("balance");
+            id = c.getInt(id);
+            String pin_ = c.getString(pin);
+            String balance_ = c.getString(balance);
+
+            pin_view.setText(pin_);
+            amount_view.setText(balance_);
+            Toast.makeText(MainActivity.this, "Settings Updated", Toast.LENGTH_LONG).show();
+        }
+
+        set_credentials.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Pattern p = Pattern.compile("\\d{4}", Pattern.CASE_INSENSITIVE);
+                Matcher m = p.matcher(set_pin.getText().toString());
+                Pattern p2 = Pattern.compile("\\d+");
+                Matcher m2 = p2.matcher(set_amount.getText().toString());
+                if (set_amount.getText().toString().isEmpty()) {
+                    set_amount.setError("Field Cannot be empty");
+                } else if (set_pin.getText().toString().isEmpty()) {
+                    set_pin.setError("Field Cannot be Empty");
+                } else if (set_pin.getText().toString().length() > 4) {
+                    set_pin.setError("Pin should be only 4 digits");
+                } else if (set_pin.getText().toString().length() < 4) {
+                    set_pin.setError("Pin should be only 4 digits");
+                } else if(!m.find()) {
+                    set_pin.setError("Pin should contain only numbers");
+                } else if (!m2.find()) {
+                    set_amount.setError("Amount should contain only numbers");
+                } else {
+
+                    Cursor c = boxpesa.rawQuery("SELECT * FROM mobile_server", null);
+
+                    if (c.getCount() > 0) {
+                        c.moveToFirst();
+                        int id = c.getColumnIndex("id");
+                        id = c.getInt(id);
+
+                        String sql = "UPDATE mobile_server SET pin = '" + set_pin.getText().toString() + "', " +
+                                "balance = '" + set_amount.getText().toString() + "' WHERE id = " + id + "";
+                        boxpesa.execSQL(sql);
+                        Toast.makeText(MainActivity.this, "Settings Updated", Toast.LENGTH_LONG).show();
+                        pin_view.setText(set_pin.getText().toString());
+                        amount_view.setText(set_amount.getText().toString());
+                    }
+
+                    if (c.getCount() < 1) {
+                        boxpesa.execSQL("INSERT INTO mobile_server (pin, balance) VALUES ('" +
+                        set_pin.getText().toString() + "','" +
+                        set_amount.getText().toString() + "')");
+
+                        Toast.makeText(MainActivity.this, "Settings Changed", Toast.LENGTH_LONG).show();
+                        pin_view.setText(set_pin.getText().toString());
+                        amount_view.setText(set_amount.getText().toString());
+                    }
+
+                }
+
+
+            }
+        });
+    }
+
+    public void reports(View view) {
+        setContentView(R.layout.reports);
     }
 
 

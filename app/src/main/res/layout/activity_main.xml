@@ -1,282 +1,339 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:context="com.example.boxpesa.MainActivity"
-        android:orientation="vertical"
-        android:padding="10dp"
-        android:layout_gravity="center"
-        android:background="@color/backgroundColor">
+
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
 
         <LinearLayout
-            android:clipToPadding="false"
-            android:layout_gravity="center"
-            android:orientation="horizontal"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <android.support.v7.widget.CardView
-                android:foreground="?android:attr/selectableItemBackground"
-                android:clickable="true"
-                android:onClick="directSaving"
-                android:layout_width="130dp"
-                android:layout_height="160dp"
-                android:layout_margin="10dp">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center">
-                    <ImageView
-                        android:layout_width="44dp"
-                        android:layout_height="44dp"
-                        android:background="@drawable/cerclebackgroundpurple"
-                        android:src="@drawable/saving_box"
-                        android:padding="10dp"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textStyle="bold"
-                        android:layout_marginTop="10dp"
-                        android:text="Direct Saving"/>
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/lightGrayLine"
-                        android:layout_margin="10dp"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="Add saving form mobile money to your BoxPesa Account"
-                        android:padding="5dp"
-                        android:textSize="10sp"
-                        android:textColor="@android:color/darker_gray"/>
-                </LinearLayout>
-            </android.support.v7.widget.CardView>
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:translationZ="10dp">
 
-            <android.support.v7.widget.CardView
-                android:foreground="?android:attr/selectableItemBackground"
+            <ImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginBottom="14dp"
+                android:layout_marginStart="13dp"
+                android:background="@drawable/btn_custome"
+                android:padding="10dp"
                 android:clickable="true"
-                android:onClick="savingPockets"
-                android:layout_width="130dp"
-                android:layout_height="160dp"
-                android:layout_margin="10dp">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center">
-                    <ImageView
-                        android:layout_width="44dp"
-                        android:layout_height="44dp"
-                        android:background="@drawable/cerclebackgroundpink"
-                        android:src="@drawable/saving_pockets"
-                        android:padding="10dp"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textStyle="bold"
-                        android:layout_marginTop="10dp"
-                        android:text="Saving Pockets"/>
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/lightGrayLine"
-                        android:layout_margin="10dp"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="Create your custome saving accounts. eg: Rent, school fees"
-                        android:padding="5dp"
-                        android:textSize="10sp"
-                        android:textColor="@android:color/darker_gray"/>
-                </LinearLayout>
-            </android.support.v7.widget.CardView>
+                android:src="@drawable/ic_settings_white_24dp"
+                android:translationZ="10dp"
+                android:onClick="settings"/>
+
+            <ImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="14dp"
+                android:layout_marginStart="13dp"
+                android:background="@drawable/btn_custome"
+                android:padding="10dp"
+                android:clickable="true"
+                android:src="@drawable/ic_power_settings_new_white_24dp"
+                android:translationZ="10dp"
+                android:onClick="log_out"/>
 
         </LinearLayout>
 
-        <LinearLayout
-            android:clipToPadding="false"
-            android:layout_gravity="center"
-            android:orientation="horizontal"
+        <ScrollView
+            android:layout_centerInParent="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
-            <android.support.v7.widget.CardView
-                android:foreground="?android:attr/selectableItemBackground"
-                android:clickable="true"
-                android:onClick="moneyZungusha"
-                android:layout_width="130dp"
-                android:layout_height="160dp"
-                android:layout_margin="10dp">
+
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:context="com.example.boxpesa.MainActivity"
+                android:orientation="vertical"
+                android:padding="10dp"
+                android:layout_gravity="center"
+                android:background="@color/backgroundColor">
+
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center">
-                    <ImageView
-                        android:layout_width="44dp"
-                        android:layout_height="44dp"
-                        android:background="@drawable/cerclebackgroundgreen"
-                        android:src="@drawable/money"
-                        android:padding="10dp"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textStyle="bold"
-                        android:layout_marginTop="10dp"
-                        android:text="Money Zungusha"/>
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/lightGrayLine"
-                        android:layout_margin="10dp"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="Receive interest rates from fixed mobile saving"
-                        android:padding="5dp"
-                        android:textSize="10sp"
-                        android:textColor="@android:color/darker_gray"/>
-                </LinearLayout>
-            </android.support.v7.widget.CardView>
+                    android:clipToPadding="false"
+                    android:layout_gravity="center"
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <android.support.v7.widget.CardView
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:onClick="directSaving"
+                        android:layout_width="130dp"
+                        android:layout_height="160dp"
+                        android:layout_margin="10dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:gravity="center">
+                            <ImageView
+                                android:layout_width="44dp"
+                                android:layout_height="44dp"
+                                android:background="@drawable/cerclebackgroundpurple"
+                                android:src="@drawable/saving_box"
+                                android:padding="10dp"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textStyle="bold"
+                                android:layout_marginTop="10dp"
+                                android:text="Direct Saving"/>
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="@color/lightGrayLine"
+                                android:layout_margin="10dp"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="Add saving from mobile money to your BoxPesa Account"
+                                android:padding="5dp"
+                                android:textSize="10sp"
+                                android:textColor="@android:color/darker_gray"/>
+                        </LinearLayout>
+                    </android.support.v7.widget.CardView>
 
-            <android.support.v7.widget.CardView
-                android:foreground="?android:attr/selectableItemBackground"
-                android:clickable="true"
-                android:onClick="emergency_loan"
-                android:layout_width="130dp"
-                android:layout_height="160dp"
-                android:layout_margin="10dp">
+                    <android.support.v7.widget.CardView
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:onClick="savingPockets"
+                        android:layout_width="130dp"
+                        android:layout_height="160dp"
+                        android:layout_margin="10dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:gravity="center">
+                            <ImageView
+                                android:layout_width="44dp"
+                                android:layout_height="44dp"
+                                android:background="@drawable/cerclebackgroundpink"
+                                android:src="@drawable/saving_pockets"
+                                android:padding="10dp"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textStyle="bold"
+                                android:layout_marginTop="10dp"
+                                android:text="Saving Pockets"/>
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="@color/lightGrayLine"
+                                android:layout_margin="10dp"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="Create pockets and save for your targets. e.g. rent, school fees etc"
+                                android:padding="5dp"
+                                android:textSize="10sp"
+                                android:textColor="@android:color/darker_gray"/>
+                        </LinearLayout>
+                    </android.support.v7.widget.CardView>
+
+                </LinearLayout>
+
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center">
-                    <ImageView
-                        android:layout_width="44dp"
-                        android:layout_height="44dp"
-                        android:background="@drawable/cerclebackgroundyello"
-                        android:src="@drawable/emergency_loan_ext"
-                        android:padding="10dp"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textStyle="bold"
-                        android:layout_marginTop="10dp"
-                        android:text="Emergency Loan"/>
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/lightGrayLine"
-                        android:layout_margin="10dp"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="Receive fast and low interest emergency loans."
-                        android:padding="5dp"
-                        android:textSize="10sp"
-                        android:textColor="@android:color/darker_gray"/>
+                    android:clipToPadding="false"
+                    android:layout_gravity="center"
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <android.support.v7.widget.CardView
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:onClick="moneyZungusha"
+                        android:layout_width="130dp"
+                        android:layout_height="160dp"
+                        android:layout_margin="10dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:gravity="center">
+                            <ImageView
+                                android:layout_width="44dp"
+                                android:layout_height="44dp"
+                                android:background="@drawable/cerclebackgroundgreen"
+                                android:src="@drawable/money"
+                                android:padding="10dp"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textStyle="bold"
+                                android:layout_marginTop="10dp"
+                                android:text="Money Zungusha"/>
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="@color/lightGrayLine"
+                                android:layout_margin="10dp"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="Receive interest rates for saving more than 6 month on Money Zungusha"
+                                android:padding="5dp"
+                                android:textSize="10sp"
+                                android:textColor="@android:color/darker_gray"/>
+                        </LinearLayout>
+                    </android.support.v7.widget.CardView>
+
+                    <android.support.v7.widget.CardView
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:onClick="emergency_loan"
+                        android:layout_width="130dp"
+                        android:layout_height="160dp"
+                        android:layout_margin="10dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:gravity="center">
+                            <ImageView
+                                android:layout_width="44dp"
+                                android:layout_height="44dp"
+                                android:background="@drawable/cerclebackgroundyello"
+                                android:src="@drawable/emergency_loan_ext"
+                                android:padding="10dp"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textStyle="bold"
+                                android:gravity="center"
+                                android:layout_marginTop="10dp"
+                                android:text="Emergency Cash Out"/>
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="@color/lightGrayLine"
+                                android:layout_margin="10dp"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="Get 1/4 emergency support from your own savings"
+                                android:padding="5dp"
+                                android:textSize="10sp"
+                                android:textColor="@android:color/darker_gray"/>
+                        </LinearLayout>
+                    </android.support.v7.widget.CardView>
+
                 </LinearLayout>
-            </android.support.v7.widget.CardView>
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:clipToPadding="false"
-            android:layout_gravity="center"
-            android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <android.support.v7.widget.CardView
-                android:foreground="?android:attr/selectableItemBackground"
-                android:id="@+id/balance_request"
-                android:clickable="true"
-                android:layout_width="130dp"
-                android:layout_height="160dp"
-                android:layout_margin="10dp">
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center">
-                    <ImageView
-                        android:layout_width="44dp"
-                        android:layout_height="44dp"
-                        android:background="@drawable/cerclebackgroundpink"
-                        android:src="@drawable/balance_request"
-                        android:padding="10dp"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textStyle="bold"
-                        android:layout_marginTop="10dp"
-                        android:text="Balance Request"/>
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/lightGrayLine"
-                        android:layout_margin="10dp"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="Check your balance three times a day. Any additinal requests will be charged."
-                        android:padding="5dp"
-                        android:textSize="10sp"
-                        android:textColor="@android:color/darker_gray"/>
+                    android:clipToPadding="false"
+                    android:layout_gravity="center"
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <android.support.v7.widget.CardView
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:id="@+id/balance_request"
+                        android:clickable="true"
+                        android:layout_width="130dp"
+                        android:layout_height="160dp"
+                        android:layout_margin="10dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:gravity="center">
+                            <ImageView
+                                android:layout_width="44dp"
+                                android:layout_height="44dp"
+                                android:background="@drawable/cerclebackgroundpink"
+                                android:src="@drawable/balance_request"
+                                android:padding="10dp"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textStyle="bold"
+                                android:layout_marginTop="10dp"
+                                android:text="Check Balance"/>
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="@color/lightGrayLine"
+                                android:layout_margin="10dp"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="Check your balance three times a day. Any additinal requests will be charged."
+                                android:padding="5dp"
+                                android:textSize="10sp"
+                                android:textColor="@android:color/darker_gray"/>
+                        </LinearLayout>
+                    </android.support.v7.widget.CardView>
+
+                    <android.support.v7.widget.CardView
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:onClick="reports"
+                        android:layout_width="130dp"
+                        android:layout_height="160dp"
+                        android:layout_margin="10dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:gravity="center">
+                            <ImageView
+                                android:layout_width="44dp"
+                                android:layout_height="44dp"
+                                android:background="@drawable/cerclebackgroundpurple"
+                                android:src="@drawable/report"
+                                android:padding="10dp"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textStyle="bold"
+                                android:gravity="center"
+                                android:layout_marginTop="10dp"
+                                android:text="Transaction Records"/>
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="@color/lightGrayLine"
+                                android:layout_margin="10dp"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="Get your overall reports for your boxpesa transactions"
+                                android:padding="5dp"
+                                android:textSize="10sp"
+                                android:textColor="@android:color/darker_gray"/>
+                        </LinearLayout>
+                    </android.support.v7.widget.CardView>
+
                 </LinearLayout>
-            </android.support.v7.widget.CardView>
 
-            <android.support.v7.widget.CardView
-                android:foreground="?android:attr/selectableItemBackground"
-                android:clickable="true"
-                android:layout_width="130dp"
-                android:layout_height="160dp"
-                android:layout_margin="10dp">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center">
-                    <ImageView
-                        android:layout_width="44dp"
-                        android:layout_height="44dp"
-                        android:background="@drawable/cerclebackgroundpurple"
-                        android:src="@drawable/report"
-                        android:padding="10dp"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textStyle="bold"
-                        android:layout_marginTop="10dp"
-                        android:text="Reports"/>
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/lightGrayLine"
-                        android:layout_margin="10dp"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="Get your overall reports of your boxpesa transactions"
-                        android:padding="5dp"
-                        android:textSize="10sp"
-                        android:textColor="@android:color/darker_gray"/>
-                </LinearLayout>
-            </android.support.v7.widget.CardView>
+            </LinearLayout>
 
-        </LinearLayout>
+        </ScrollView>
 
-    </LinearLayout>
 
-</ScrollView>
+
+    </RelativeLayout>
+
+
+
+

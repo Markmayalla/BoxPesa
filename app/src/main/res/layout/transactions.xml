@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/background_gradient">
+    <TextView
+        android:id="@+id/apb_pocket_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:scaleType="center"
+        android:gravity="center_horizontal|center_vertical"
+        android:textSize="20sp"
+        android:textColor="#ffffff"
+        android:textStyle="bold"
+        android:text="Transaction Records"
+        android:drawableLeft="@drawable/ic_arrow_back_black_24dp"
+        android:onClick="reports"
+        android:background="@color/pinkAccent"
+        android:contentDescription="@string/app_name" />
+
+
+    <ListView
+        android:id="@+id/transactions"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+    </ListView>
+
+</LinearLayout>
